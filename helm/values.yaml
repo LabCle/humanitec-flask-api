@@ -1,0 +1,55 @@
+replicaCount: 1
+
+image:
+  repository: clecio/flask-api
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP  # Mantemos ClusterIP pois o tráfego virá via Ingress
+  port: 5000
+
+mongodb:
+  image: mongo
+  port: 27017
+  storage: 1Gi
+
+redis:
+  image: redis
+  port: 6379
+
+env:
+  MONGO_URI: "mongodb://mongo:27017/mydb"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+
+serviceAccount:
+  create: true
+  name: "flask-api-sa"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: "flask-api.local"  # Certifique-se de que está correto
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"

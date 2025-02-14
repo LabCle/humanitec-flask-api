@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-api
+  labels:
+    app: flask-api
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: flask-api
+  template:
+    metadata:
+      labels:
+        app: flask-api
+    spec:
+      containers:
+        - name: flask-api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: "{{ .Values.env.MONGO_URI }}"
+            - name: REDIS_HOST
+              value: "{{ .Values.env.REDIS_HOST }}"
+            - name: REDIS_PORT
+              value: "{{ .Values.env.REDIS_PORT }}"
