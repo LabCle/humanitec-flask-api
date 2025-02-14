@@ -1,0 +1,22 @@
+apiVersion: humanitec.io/v1alpha1
+kind: Resource
+metadata:
+  name: github-for-gitops
+spec:
+  id: github-for-gitops
+  type: k8s-cluster
+  driverType: humanitec/k8s-cluster-git
+  driver: humanitec/k8s-cluster-git
+  guresid: github-for-gitops
+  dependsOn: []
+  driverInputs:
+    driver:
+      values:
+        url: "https://github.com/LabCle/humanitec-flask-api.git"
+        branch: "main"
+        path: "environments/${context.app.id}/${context.env.id}"
+        loadbalancer: "35.226.101.168"
+      secrets:
+        - secretKey: "password"
+          value: "${resources.humanitec-git-secret.outputs.password}"
+  secretStoreName: humanitec-git-secret

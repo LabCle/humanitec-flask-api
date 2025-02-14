@@ -1,0 +1,32 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: humanitec-operator-access
+rules:
+  - apiGroups: [""]
+    resources:
+      - secrets
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["humanitec.io"]
+    resources:
+      - resources
+      - resources/status  # ✅ Permissão para atualizar status
+      - secretmappings
+      - secretstores
+      - workloads
+      - workloadpatches
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: humanitec-operator-access-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: humanitec-operator-access
+subjects:
+  - kind: ServiceAccount
+    name: humanitec-operator-controller-manager
+    namespace: humanitec-operator-system

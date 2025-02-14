@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: humanitec-git-config
+  namespace: default  # Ajuste conforme necessário
+data:
+  url: "https://github.com/LabCle/humanitec-flask-api.git"
+  branch: "main"
+  path: "environments/${context.app.id}/${context.env.id}"
+  loadbalancer: "35.226.101.168"
